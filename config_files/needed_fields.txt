@@ -1,0 +1,13 @@
+NAME, "Name of this ChatBot"
+DESCRIPTION, "A short description of this chatbot"
+WELCOME_MESSAGE, "A short welcome message that will be displayed by this chatbot"
+INPUT_PROMPT_TEXT, "The text the chatbot will say when waiting for a message"
+PROCESSING_TEXT,  "Message this chatbot will say when it is processing a question"
+ERROR_TEXT, "Message this chatbot will say when something goes wrong"
+CHABOT_LOGO , "URL of the chatbot logo"
+SOURCE, Folder path with the files this chatbot will consume
+WIKI_API_URL, "URL of the mediawiki API file that will serve this chatbot"
+PROMPT_INSTRUCTION_BEFORE_CONTEXT, "Main instruction before context information"
+PROMPT_INSTRUCTION_AFTER_CONTEXT, "Main instruction after context information"
+PROMPT_PERSONALITY, "Describe the personality and temeperament that the chat will use to respond the question"
+

@@ -1,0 +1,11 @@
+beautifulsoup4==4.12.3
+chromadb==0.5.5
+Flask==3.0.3
+Flask_Cors==4.0.1
+llama_index==0.10.58
+pymediawiki==0.7.4
+PyPDF2==3.0.1
+python-dotenv==1.0.1
+Requests==2.32.3
+streamlit==1.37.0
+waitress==3.0.0
