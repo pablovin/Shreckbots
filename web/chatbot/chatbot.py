@@ -37,7 +37,7 @@ def extract_text_from_file(uploaded_file):
 
 bots = load_bot_configs()
 if "chat" in st.query_params and st.query_params["chat"] in bots:
-    chat_name = st.query_params["chat"]
+    chat_name = st.query_params["chat"].capitalize()
     this_bot_env = API_CONFIG_FILE = os.path.join(CONFIG_DIR, f"{chat_name}.env")
     load_dotenv(API_CONFIG_FILE)   
 
