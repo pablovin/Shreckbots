@@ -11,6 +11,8 @@ STORE_DIRECTORY = os.getenv("STORE_DIRECTORY")
 
 def read_wiki_pages(bot, logger):
         load_dotenv(API_CONFIG_FILE)
+        config_file_bot = os.path.join(CONFIG_DIR, f"{bot}.env")
+        load_dotenv(config_file_bot)        
         try:
             logger.info(f"Extracting WIKI pages for {bot}")        
             wiki_url = os.getenv(f"WIKI_API_URL_{bot}")                
@@ -28,7 +30,10 @@ def read_wiki_pages(bot, logger):
 
 
 def update_embeddings(bot, folder,logger):
-    load_dotenv(API_CONFIG_FILE)    
+    load_dotenv(API_CONFIG_FILE)   
+    config_file_bot = os.path.join(CONFIG_DIR, f"{bot}.env")
+    load_dotenv(config_file_bot)           
+    
     logger.info(f"Embedding Documents for {bot}")
     source_dir = os.path.join(os.getenv(f"SOURCE_{bot}"), folder)
     logger.info(f" --- Reading from: {source_dir}")
