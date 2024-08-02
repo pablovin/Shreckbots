@@ -92,7 +92,7 @@ def get_chat_engine(bot, index, memory):
         refine_template=refine_template
     )
 
-    chat_engine = index.as_chat_engine(memory=memory, verbose=True, chat_mode="condense_plus_context", response_synthesizer=response_synthesizer, similarity_top_k=int(os.getenv("TOP_K_RETRIEVAL")), node_postprocessors=[SimilarityPostprocessor(similarity_cutoff=0.3)])
+    chat_engine = index.as_chat_engine(memory=memory, verbose=False, chat_mode="condense_plus_context", response_synthesizer=response_synthesizer, similarity_top_k=int(os.getenv("TOP_K_RETRIEVAL")), node_postprocessors=[SimilarityPostprocessor(similarity_cutoff=0.3)])
 
     return chat_engine
 
