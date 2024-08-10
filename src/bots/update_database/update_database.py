@@ -1,7 +1,6 @@
-from mechanics_chats.update_database.update_db_utils import get_documents, get_storage_context, save_embedded_index, read_wiki
+from bots.update_database.update_db_utils import get_documents, get_storage_context, save_embedded_index, read_wiki
 from dotenv import load_dotenv
 import os
-import argparse
 
 CONFIG_DIR = "config_files"
 API_CONFIG_FILE = os.path.join(CONFIG_DIR, "api.env")

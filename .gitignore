@@ -8,8 +8,10 @@ source/
 chat/
 data/
 config_files/*.env
+config_files/api.env
 *.env
 logos/
+wiki_pages/
 
 # C extensions
 *.so

@@ -1,4 +1,4 @@
-from mechanics_chats.chatbots.chatbots import chat_cmd, get_index, initialize_llm
+from bots.chatbots.chatbots import chat_cmd, get_index, initialize_llm
 import argparse
 import logging
 from dotenv import load_dotenv

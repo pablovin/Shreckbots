@@ -1,10 +1,9 @@
 import os
 import requests
 import streamlit as st
-from dotenv import load_dotenv, dotenv_values
+from dotenv import load_dotenv
 from PyPDF2 import PdfReader
 from bs4 import BeautifulSoup
-import io
 
 from streamlit.runtime.scriptrunner.script_run_context import get_script_run_ctx
 

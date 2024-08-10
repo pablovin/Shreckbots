@@ -6,11 +6,13 @@ from flask_cors import CORS
 import logging
 import sys
 import threading
+import traceback
 
+from bots.chatbots.chatbots import initialize_llm, get_index, chat
 
-from mechanics_chats.chatbots.chatbots import initialize_llm, get_index, chat
-
-from mechanics_chats.update_database.update_database import read_wiki_pages, update_embeddings
+from bots.update_database.update_database import read_wiki_pages, update_embeddings
+from bots.wiki.wiki_generation import get_entities
+from bots.wiki.wiki_manipulation import upload_pages
 
 import argparse
 
@@ -68,6 +70,35 @@ update_logger = set_loggers()
 
 # REST API
 
+@app.route('/upload_wiki_pages', methods=['POST'])
+def create_new_pages():    
+    update_logger = set_loggers()
+    json = request.get_json(silent=True)        
+    bot = json['bot']
+    pages = json['pages']    
+    thread = threading.Thread(target=upload_pages, args=(bot, pages, update_logger))    
+    thread.start()    
+
+    data = {'answer':"updated"}
+    return jsonify(data), 200
+
+
+
+@app.route('/get_new_wiki_pages', methods=['POST'])
+def new_wiki_page():    
+    update_logger = set_loggers()
+    json = request.get_json(silent=True)        
+    bot = json['bot']
+    text = json['text']
+ 
+    thread = threading.Thread(target=get_entities, args=(bot, text, update_logger))
+    # Start the thread
+    thread.start()    
+
+    data = {'answer':"updated"}
+    return jsonify(data), 200
+
+
 @app.route('/read_wiki', methods=['POST'])
 def read_wiki():    
     update_logger = set_loggers()
@@ -119,78 +150,12 @@ def get_request(json):
 
 
 
-# @app.route('/api/st', methods=['POST'])
-# def post_question_st():
-
-#     json = request.get_json(silent=True)
-#     data = get_request(index_elder, json, "ELDER")
-    
-#     return jsonify(data), 200
-
-#     # json = request.get_json(silent=True)
-
-#     # print (f"JSOn: {json}")
-#     # question = json['question']
-#     # user_id = json['user_id']
-    
-#     # logging.info("post question `%s` for user `%s`", question, user_id)
-        
-#     # resp = chat(question, index_elder, user_id, "ELDER")
-#     # data = {'answer':resp}
-
-#     # return jsonify(data), 200
-
-
-# @app.route('/api/dm', methods=['POST'])
-# def post_question_dm():
-    
-#     json = request.get_json(silent=True)
-#     data = get_request(index_sage, json, "SAGE")
-    
-#     return jsonify(data), 200
-
-
-#     # json = request.get_json(silent=True)
-
-#     # print (f"JSOn: {json}")
-#     # question = json['question']
-#     # user_id = json['user_id']    
-#     # logging.info("post question `%s` for user `%s`", question, user_id)
-
-#     # resp = chat(question, index_sage, user_id, "SAGE")
-#     # data = {'answer':resp}
-
-#     # return jsonify(data), 200
-
-# @app.route('/api/mt', methods=['POST'])
-# def post_question_mt():
-    
-#     json = request.get_json(silent=True)
-
-#     data = get_request(index_mestre, json, "MESTRE")
-    
-#     return jsonify(data), 200
-
-
-
-
-
 def before_request():
     session.permanent = True
     app.permanent_session_lifetime = timedelta(minutes=1)
     session.modified = True
     session["chat_id"] = session["chat_id"]
 
-
-# API_CONFIG_FILE = os.path.join(CONFIG_DIR, "api.env")
-
-
-
-# config = {
-#     **dotenv_values(API_CONFIG_FILE),  # load shared development variables
-#     # **dotenv_values(".env.secret"),  # load sensitive variables
-#     **os.environ,  # override loaded values with environment variables
-# }
 
 if __name__ == '__main__':
     
@@ -206,7 +171,6 @@ if __name__ == '__main__':
             
     #Initialize LLM
     try:
-
         # #Load all the available bots
         bots = load_bot_configs()
         if not no_bots:
@@ -216,8 +180,8 @@ if __name__ == '__main__':
                 index_bots[bot] = get_index(bot, app.logger)
                 app.logger.info(f"SERVING {bot}")
             
-    except Exception  as e:
-        app.logger.error(f"ERROR: {e.with_traceback()}")
+    except Exception  as e:        
+        app.logger.error(f"ERROR: {traceback.format_exc()}")
 
     serve(app, host=os.getenv("API_HOST"), port=int(os.getenv("API_PORT")))
 

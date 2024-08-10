@@ -3,7 +3,7 @@ from llama_index.llms.ollama import Ollama
 from llama_index.llms.openai import OpenAI
 from llama_index.embeddings.huggingface import HuggingFaceEmbedding
 
-from mechanics_chats.update_database.update_db_utils import get_storage_context
+from bots.update_database.update_db_utils import get_storage_context
 from llama_index.core import load_index_from_storage
 from llama_index.core.postprocessor import SimilarityPostprocessor
 from llama_index.core import get_response_synthesizer
