@@ -11,8 +11,6 @@ import shutil
 import traceback
 
 import logging
-from datetime import datetime
-
 import re
 
 

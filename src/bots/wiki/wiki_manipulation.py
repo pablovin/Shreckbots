@@ -1,11 +1,8 @@
 import os
-import requests
-from requests.exceptions import HTTPError
-import getpass
 from dotenv import load_dotenv
 import logging
 from mediawiki import MediaWiki
-import shutil 
+
 
 
 CONFIG_DIR = "config_files"
