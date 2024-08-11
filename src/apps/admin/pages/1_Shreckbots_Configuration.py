@@ -1,19 +1,6 @@
-import os
 import streamlit as st
-from dotenv import load_dotenv, dotenv_values
+from utils_admin import load_api_config, save_api_config
 
-CONFIG_DIR = "config_files"
-API_CONFIG_FILE = os.path.join(CONFIG_DIR, "api.env")
-
-def load_api_config():
-    if os.path.exists(API_CONFIG_FILE):
-        return dotenv_values(API_CONFIG_FILE)
-    return {}
-
-def save_api_config(config):
-    with open(API_CONFIG_FILE, 'w') as f:
-        for key, value in config.items():
-            f.write(f"{key}='{value}'\n")
 
 st.set_page_config(page_title="Shreckbot Configurations", page_icon="📈")
 st.title("ShreckBots – API Configurations")

@@ -1,40 +1,13 @@
 import os
 import streamlit as st
 import requests
-from dotenv import load_dotenv, dotenv_values
-from PyPDF2 import PdfReader
-from bs4 import BeautifulSoup
 import time
 
-CONFIG_DIR = "config_files"
-API_CONFIG_FILE = os.path.join(CONFIG_DIR, "api.env")
+from utils_admin import read_log_contents, load_bot_configs, load_api_config, extract_text_from_file
 
-def load_bot_configs():
-    bots = {}
-    for filename in os.listdir(CONFIG_DIR):
-        if filename.endswith(".env") and filename != "api.env":
-            bot_name = filename.replace(".env", "")
-            bots[bot_name] = dotenv_values(os.path.join(CONFIG_DIR, filename))
-    return bots
-
-def read_log_contents(log_file_path):
-    if os.path.exists(log_file_path):
-        with open(log_file_path, 'r') as f:
-            return f.read()
-    return ""
-
-def extract_text_from_file(uploaded_file):
-    if uploaded_file.type == "application/pdf":
-        pdf_reader = PdfReader(uploaded_file)
-        text = ""
-        for page in pdf_reader.pages:
-            text += page.extract_text()
-    elif uploaded_file.type == "text/html":
-        soup = BeautifulSoup(uploaded_file.read(), "html.parser")
-        text = soup.get_text()
-    else:
-        text = uploaded_file.read().decode("utf-8")
-    return text
+load_api_config()
+bots = load_bot_configs()
+bot_names = list(bots.keys())
 
 st.set_page_config(page_title="Update Wiki Pages", page_icon="📈")
 
@@ -53,20 +26,17 @@ st.write("Need more information? Check our Shreckbot manual: https://github.com/
 
 st.markdown("---")
 
-load_dotenv(API_CONFIG_FILE)
-bots = load_bot_configs()
-bot_names = list(bots.keys())
-
 if not bot_names:
     st.sidebar.write("No chat bots available.")
 else:
     selected_bot_name = st.sidebar.selectbox("Select a bot", bot_names)
     if selected_bot_name:
-        config_bot = bots[selected_bot_name].get(f'WIKI_API_URL_{selected_bot_name}')
+        config_bot = bots[selected_bot_name].get(f'WIKI_API_URL_{selected_bot_name}')    
         st.sidebar.write(f"WIKI_API_URL: {config_bot}")
 
         uploaded_file = st.sidebar.file_uploader("Choose a file (.pdf or .txt)", type=["pdf", "txt"])
-
+        
+        st.subheader(f"Create Wiki Pages for: {selected_bot_name}")
         if st.sidebar.button("Update Wiki Pages"):
             if uploaded_file is not None:
                 file_content = extract_text_from_file(uploaded_file)
@@ -84,6 +54,7 @@ else:
                 st.error("Please upload a file before updating the wiki pages.")
 
 if 'show_log' in st.session_state and st.session_state['show_log']:
+    
     st.subheader("Operation Outcome")
     log_file_path = 'update_log.log'
     log_contents = st.empty()

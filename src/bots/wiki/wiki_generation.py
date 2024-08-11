@@ -21,8 +21,7 @@ def load_shreckbot_config():
     API_CONFIG_FILE = os.path.join(CONFIG_DIR, "api.env")
     load_dotenv(API_CONFIG_FILE)
     
-def load_bot_config(bot):
-    
+def load_bot_config(bot):    
     config_file_bot = os.path.join(CONFIG_DIR, f"{bot}.env")
     load_dotenv(config_file_bot)  
 
@@ -515,7 +514,7 @@ def create_text_files(entities_with_content, bot, logger):
     # Iterate over each key-value pair in the dictionary
     for entity, pages_list in entities_with_content.items():
         # Create the filename using the key
-        logger.warning(f" ---- Entity: {entity}")  
+        # logger.warning(f" ---- Entity: {entity}")  
         for page, page_text in pages_list.items():
             page_type = page_text['type']  
             save_directory = os.path.join(save_folder, page_type)   
@@ -531,7 +530,7 @@ def create_text_files(entities_with_content, bot, logger):
             with open(filename, 'w') as txt_file:
                  txt_file.write(page_text['text'])
 
-    logger.warning(f" ---- All pages created at {save_folder}")         
+    logger.warning(f" ------ All pages created at {save_folder}/")         
 
    
 def create_new_sessions(mediawiki, updatable_pages_sumaries, model, logger):
@@ -583,19 +582,7 @@ def get_entities(bot, text, logger):
     for entity in  this_bot_entities:
         logger.warning(f" ---- Entity: {entity}  Templates: {this_bot_entities[entity]}") 
 
-    logger.warning(f" -- Reading all wiki pages...")    
-
-    
-    # now = datetime.now()
-    # template_name = "Template:Vampire_Template"
-    # tempalte_html = get_template(mediawiki,template_name, logger)    
-    # fields = get_fields(tempalte_html)
-    # print (f"Fields: {fields}")
-    # print (f"Template done in {(datetime.now()-now).total_seconds()} seconds")
-    
-    # now = datetime.now()
-    # all_categories = get_all_categories_mw(mediawiki, logger)    
-    # print (f"All categories done in {(datetime.now()-now).total_seconds()} seconds")
+    logger.warning(f" -- Reading all wiki pages...")            
 
     entities = get_all_existing_pages(mediawiki, this_bot_entities, logger)
 

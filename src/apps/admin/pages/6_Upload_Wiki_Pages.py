@@ -2,30 +2,10 @@ import os
 import streamlit as st
 import requests
 import time
-from dotenv import load_dotenv, dotenv_values
 
-# Load environment variables
-CONFIG_DIR = "config_files"
-API_CONFIG_FILE = os.path.join(CONFIG_DIR, "api.env")
-load_dotenv(API_CONFIG_FILE)
+from utils_admin import read_log_contents, load_bot_configs, load_api_config, get_files_in_wiki_folder
 
-def load_bot_configs():
-    bots = {}
-    for filename in os.listdir(CONFIG_DIR):
-        if filename.endswith(".env") and filename != "api.env":
-            bot_name = filename.replace(".env", "")
-            bots[bot_name] = dotenv_values(os.path.join(CONFIG_DIR, filename))
-    return bots
-
-def get_files_in_wiki_folder(folder_path):
-    return [f for f in os.listdir(folder_path) if os.path.isfile(os.path.join(folder_path, f))]
-
-def read_log_contents(log_file_path):
-    """Reads the contents of the log file."""
-    if os.path.exists(log_file_path):
-        with open(log_file_path, 'r') as file:
-            return file.read()
-    return ""
+load_api_config()
 
 st.set_page_config(page_title="Update Wiki Pages", page_icon="📈")
 
@@ -63,15 +43,11 @@ else:
             wiki_files_new = get_files_in_wiki_folder(wiki_files_new_directory)
         if os.path.exists(wiki_files_update_directory):                 
             wiki_files_update = get_files_in_wiki_folder(wiki_files_update_directory)
-
-        
-        
-        # print (wiki_files_new)
-        # print (wiki_files_update)
+                        
         if (len(wiki_files_new)==0 and len(wiki_files_update)==0) :
             st.warning("No pages to be uploaded! Create new pages first!")
         else:
-            st.write("## Uploading Wiki Pages")
+            st.write(f"## Uploading Wiki Pages to {selected_bot_name}")
             include_files_update = {}
         
             col1, col2, col3= st.columns(3)
@@ -152,10 +128,9 @@ else:
                     # Add checkbox to include the file for upload
                     include_files_New[page_name] = st.checkbox(f"Include", key=file_name, value=False)
 
-
             # Upload selected files to the wiki
             st.markdown("---")
-            if st.button("Upload to Wiki"):
+            if st.button(f"Upload to {selected_bot_name}"):
                 selected_files_new = [name for name, include in include_files_New.items() if include]
                 selected_files_update = [name for name, include in include_files_update.items() if include]
                 

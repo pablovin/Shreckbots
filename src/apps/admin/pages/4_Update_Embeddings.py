@@ -1,30 +1,15 @@
 import os
 import streamlit as st
 import requests
-from dotenv import load_dotenv
-from dotenv import dotenv_values
 import time
+
+from utils_admin import read_log_contents, load_bot_configs, load_api_config
 
 
 CONFIG_DIR = "config_files"
 LOG_FILE_PATH = "update_log.log"
 
 API_CONFIG_FILE = os.path.join(CONFIG_DIR, "api.env")
-
-def load_bot_configs():
-    bots = {}
-    for filename in os.listdir(CONFIG_DIR):
-        if filename.endswith(".env") and filename != "api.env":
-            bot_name = filename.replace(".env", "")
-            bots[bot_name] = dotenv_values(os.path.join(CONFIG_DIR, filename))
-    return bots
-
-def read_log_contents(log_file_path):
-    if os.path.exists(log_file_path):
-        with open(log_file_path, 'r') as f:
-            return f.read()
-    return ""
-
 
 st.set_page_config(page_title="Update Bot Embeddings", page_icon="📈")
 
@@ -40,14 +25,13 @@ st.write("Need more information? Check our Shreckbot manual: https://github.com/
 st.markdown("---")
 
 
-load_dotenv(API_CONFIG_FILE)
+load_api_config()
 bots = load_bot_configs()
 bot_names = list(bots.keys())
 
 if not bot_names:
     st.write("No chat bots available.")
 else:
-
     st.subheader("Update Embeddings for Chat Bots")
 
     col1, col2, col3, col4 = st.columns(4)

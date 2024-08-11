@@ -1,33 +1,7 @@
 import os
 import streamlit as st
 from dotenv import dotenv_values
-
-CONFIG_DIR = "config_files"
-FIELDS_FILE = os.path.join(CONFIG_DIR, "needed_fields.txt")
-
-def load_needed_fields():
-    fields = []
-    if os.path.exists(FIELDS_FILE):
-        with open(FIELDS_FILE, 'r') as f:
-            for line in f:
-                if ',' in line:
-                    field, description = line.strip().split(',', 1)
-                    fields.append((field.strip(), description.strip()))
-    return fields
-
-def save_bot_config(bot_name, config):
-    filepath = os.path.join(CONFIG_DIR, f"{bot_name}.env")
-    with open(filepath, 'w') as f:
-        for key, value in config.items():
-            f.write(f"{key}='{value}'\n")
-
-def load_bot_configs():
-    bots = {}
-    for filename in os.listdir(CONFIG_DIR):
-        if filename.endswith(".env"):
-            bot_name = filename.replace(".env", "")
-            bots[bot_name] = dotenv_values(os.path.join(CONFIG_DIR, filename))
-    return bots
+from utils_admin import load_needed_fields, save_bot_config, load_bot_configs
 
 st.set_page_config(page_title="New Chatbots", page_icon="📈")
 
