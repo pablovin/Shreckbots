@@ -78,7 +78,7 @@ def get_template(mediawiki, found_entities , all_entities_templates):
             # print (f"Templates: {all_entities_templates[entity]}")
 
             for template in templates:
-                # logger.warning(f" ------ Template: {template}")
+                print(f" ------ Template: {template}")
                 params = {
                     'action': 'query',
                     'prop': 'revisions',
