@@ -131,8 +131,8 @@ def upload_pages(bot, new_pages,update_pages, logger):
                 page_content = file.read()
                 result = upload_page(mediawiki, csrf_token, page, page_content)
                 logger.warning(f" ------- Result: {result}")  
-                # if result:
-                #     os.remove(file_name)
+                if result:
+                    os.remove(file_name)
 
 
         logger.warning(f" -- I will update these existing pages: {update_pages}")          
@@ -143,8 +143,8 @@ def upload_pages(bot, new_pages,update_pages, logger):
                 page_content = file.read()
                 result = update_page(mediawiki, csrf_token, page, page_content)
                 logger.warning(f" ------- Result: {result}")  
-                # if result:
-                #     os.remove(file_name)
+                if result:
+                    os.remove(file_name)
 
 
     logger.info(f" --- Update Done!")
