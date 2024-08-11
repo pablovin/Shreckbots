@@ -408,57 +408,61 @@ def create_summary_from_entity(text, entities, page_type, model):
     return parse_entities(entities)
 
 def create_session_existing_page(mediawiki, page, summary, model):
+    try:
+        page_text = mediawiki.page(title=page).wikitext
 
-    page_text = mediawiki.page(title=page).wikitext
+        prompt = f"""    
+        You are my assistant to mantain a wiki page. You will help me to update existing pages for my wiki.
+        I will give you the text of the original page and the summary information that is a candidate for the page update.
+        You have to tell me if the summary is redundant based on the original page text.
 
-    prompt = f"""    
-    You are my assistant to mantain a wiki page. You will help me to update existing pages for my wiki.
-    I will give you the text of the original page and the summary information that is a candidate for the page update.
-    You have to tell me if the summary is redundant based on the original page text.
-
-    If the summary contains new information, write a new wiki session describing only the new information, in away that complements the original page text.        
-    
-    """    
-    
-    # prompt+=f"These are the entities that you need to extract from the text: {list(entities.keys())}\n These pages already existing on my wiki:\n"
-    # prompt+=f"These are the pages we need to create:\n"
-    # for entity in entities:
-    #     if len(entities[entity])>0:
-    #         prompt+=f"{entity}: {entities[entity]}\n"
-
-            
-    prompt +=f"""
+        If the summary contains new information, write a new wiki session describing only the new information, in away that complements the original page text.        
         
-    This is the original page text:
-    {page_text}\n
+        """    
+        
+        # prompt+=f"These are the entities that you need to extract from the text: {list(entities.keys())}\n These pages already existing on my wiki:\n"
+        # prompt+=f"These are the pages we need to create:\n"
+        # for entity in entities:
+        #     if len(entities[entity])>0:
+        #         prompt+=f"{entity}: {entities[entity]}\n"
 
-    This is the summary candidate:
-    {summary}\n"""
+                
+        prompt +=f"""
+            
+        This is the original page text:
+        {page_text}\n
 
-    prompt+="""       
-    Provide the output in the following JSON format:
-    {
-    new_information: [ True or False],
-    session_title: "Title of the new session",
-    session_text: "Text of the new session"
-    }
-    """    
-    
-    client = OpenAI()
-    
-    messages=[
-    {"role": "system", "content": prompt}   
-    ]
-    
-    response = client.chat.completions.create(
-        model=model,        
-        messages=messages,        
-        temperature=0,
-        response_format=ResponseFormat(type="json_object")
-    )
-    
-    entities = response.choices[0].message.content.replace("json", "").replace("```","").replace("```","")
+        This is the summary candidate:
+        {summary}\n"""
 
+        prompt+="""       
+        Provide the output in the following JSON format:
+        {
+        new_information: [ True or False],
+        session_title: "Title of the new session",
+        session_text: "Text of the new session"
+        }
+        """    
+        
+        client = OpenAI()
+        
+        messages=[
+        {"role": "system", "content": prompt}   
+        ]
+        
+        response = client.chat.completions.create(
+            model=model,        
+            messages=messages,        
+            temperature=0,
+            response_format=ResponseFormat(type="json_object")
+        )
+        
+        entities = response.choices[0].message.content.replace("json", "").replace("```","").replace("```","")
+    except:
+        result = {}
+        result["new_information"] = False
+        return result
+    
     return parse_entities(entities)
 
 
@@ -542,7 +546,8 @@ def create_new_sessions(mediawiki, updatable_pages_sumaries, model, logger):
 
         
         for page in updatable_pages_sumaries[entity]:
-            page_summary = updatable_pages_sumaries[entity][page]["text"]                                                                                        
+            page_summary = updatable_pages_sumaries[entity][page]["text"]    
+
             result_page_session = create_session_existing_page(mediawiki, page, page_summary, model)                         
             
             
