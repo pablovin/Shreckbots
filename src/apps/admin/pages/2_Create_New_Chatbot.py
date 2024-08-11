@@ -38,6 +38,9 @@ bots = load_bot_configs()
 bot_names = list(bots.keys())
 
 st.subheader("Create a New Chat Bot")
+st.markdown("---")
+st.write("Type the new chatbot name, and fill all the important parameters to create a new chatbot!")
+st.markdown("---")
 new_bot_name = st.text_input("New Bot Name")
 new_bot_config = {}
 

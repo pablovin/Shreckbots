@@ -55,7 +55,7 @@ def get_CRFS_Token(mediawiki, logger):
     # logger.warning(f" --- CRFS Token result: {crfs_token}")  
     return crfs_token
 
-def upload_page(mediawiki, csrf_token, page_name, page_content, logger):
+def upload_page(mediawiki, csrf_token, page_name, page_content):
 
     params={
             "action": "edit",
@@ -69,23 +69,50 @@ def upload_page(mediawiki, csrf_token, page_name, page_content, logger):
     result_upload = mediawiki._post_response(params=params)["edit"]["result"]
 
     return result_upload
+
+def extract_session_title_and_text(text):
+    # Split the text by the "===" which usually marks the beginning and end of a title
+    parts = text.split("===")
+    
+    # Clean and extract the session title and text
+    session_title = parts[1].strip() if len(parts) > 1 else ""
+    session_text = parts[2].strip() if len(parts) > 2 else ""
+    
+    return session_title, session_text
+
+
+def update_page(mediawiki, csrf_token, page_name, page_content):
+
+    session_title, session_text = extract_session_title_and_text(page_content)
+    # Step 2: Add the new section
+    params = {
+        "action": "edit",
+        "title": page_name,
+        "section": "new",  # This specifies that we are adding a new section
+        "sectiontitle": session_title,
+        "appendtext": session_text,
+        "token": csrf_token,
+        "format": "json"
+    }
+
+    result_update = mediawiki._post_response(params=params)["edit"]["result"]
+    return result_update
    
 
-def upload_pages(bot, pages, logger):
+def upload_pages(bot, new_pages,update_pages, logger):
     load_shreckbot_config()
     load_bot_config(bot)
 
-    wiki_url = os.getenv(f"WIKI_API_URL_{bot}")
-    folder_path = os.path.join(os.getenv("WIKI_PAGES_FOLDER"),bot)
+    wiki_url = os.getenv(f"WIKI_API_URL_{bot}")    
     username = os.getenv(f"WIKI_USERNAME_{bot}")
     password = os.getenv(f"WIKI_PASSWORD_{bot}")
+    folder_path_new = os.path.join(os.getenv("WIKI_PAGES_FOLDER"),bot, "NewPage")
+    folder_path_update = os.path.join(os.getenv("WIKI_PAGES_FOLDER"),bot, "UpdatePage")
 
     mediawiki = MediaWiki(url=wiki_url)
 
     logger.warning(f"Uploading pages to: {bot}")        
-    logger.warning(f" -- Wiki: {wiki_url}")        
-    logger.warning(f" -- Pages: {pages}")            
-
+    logger.warning(f" -- Wiki: {wiki_url}")                                  
     logger.warning(f" -- Getting login token...")        
     login_token = get_login_token(mediawiki,logger)
 
@@ -96,26 +123,41 @@ def upload_pages(bot, pages, logger):
         logger.warning(f" -- Getting CSFR Token ...")     
         csrf_token = get_CRFS_Token(mediawiki, logger)
 
-        logger.warning(f" -- Creating pages ...")     
-        for page in pages:
+        logger.warning(f" -- I will create these new pages: {new_pages}")          
+        for page in new_pages:
             logger.warning(f" ---- Page {page} ...")  
-            file_name = os.path.join(folder_path,page+".txt")            
+            file_name = os.path.join(folder_path_new,page+".txt")            
             with open(file_name, 'r') as file:
                 page_content = file.read()
-                result = upload_page(mediawiki, csrf_token, page, page_content, logger)
+                result = upload_page(mediawiki, csrf_token, page, page_content)
                 logger.warning(f" ------- Result: {result}")  
-                if result:
-                    os.remove(file_name)
+                # if result:
+                #     os.remove(file_name)
 
+
+        logger.warning(f" -- I will update these existing pages: {update_pages}")          
+        for page in update_pages:
+            logger.warning(f" ---- Page {page} ...")  
+            file_name = os.path.join(folder_path_update,page+".txt")            
+            with open(file_name, 'r') as file:
+                page_content = file.read()
+                result = update_page(mediawiki, csrf_token, page, page_content)
+                logger.warning(f" ------- Result: {result}")  
+                # if result:
+                #     os.remove(file_name)
+
+
+    logger.info(f" --- Update Done!")
 
 
 
 def main():
 
     bot = "Elder"    
-    pages = ["Agonos"]    
+    new_pages = []    
+    update_page = ["London"]    
     # print (f"text_input: {text_input}")
-    upload_pages(bot, pages, logging)
+    upload_pages(bot, new_pages,update_page, logging)
 
 if __name__ == "__main__":
     main() 

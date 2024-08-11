@@ -29,6 +29,16 @@ def read_log_contents(log_file_path):
 st.set_page_config(page_title="Update Bot Embeddings", page_icon="📈")
 
 st.title("ShreckBots – Update Chat Embeddings")
+st.markdown("---")
+st.write("Use this page to update the data source for each bot`s knowledge.")
+st.write("You can create embeddings from the associated wiki, or from the books folder.")
+st.write("The bots read the embeddings every time you make a question to them, so keep them updated.")
+st.write("For the embeddings wiki, first read the wiki pages, and then click on the update wiki button.")
+st.write("For documents document, click on update documents button.")
+st.write("Need more information? Check our Shreckbot manual: https://github.com/pablovin/Shreckbots")
+
+st.markdown("---")
+
 
 load_dotenv(API_CONFIG_FILE)
 bots = load_bot_configs()

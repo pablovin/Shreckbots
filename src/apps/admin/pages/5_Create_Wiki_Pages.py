@@ -40,6 +40,19 @@ st.set_page_config(page_title="Update Wiki Pages", page_icon="📈")
 
 st.title("ShreckBots – Update Wiki Pages")
 
+st.markdown("---")
+st.write("""This page allows you to create and update wiki pages automatically based on a given text.
+         I will read the text, and following the parameters of each bot, I will propose new pages
+         that can be added to the wiki, or new content to update existing pages.
+         """)
+st.write("First, select the bot you want to create pages to.")
+st.write("Second, select the text you want me to read.")
+st.write("Third, click on the Update Wiki button and I will do my magic!")
+st.write("I will tell you when everything is ready, and you can use the Upload Wiki Pages tool to continue.")
+st.write("Need more information? Check our Shreckbot manual: https://github.com/pablovin/Shreckbots")
+
+st.markdown("---")
+
 load_dotenv(API_CONFIG_FILE)
 bots = load_bot_configs()
 bot_names = list(bots.keys())

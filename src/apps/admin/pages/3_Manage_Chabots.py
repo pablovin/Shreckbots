@@ -39,6 +39,9 @@ st.set_page_config(page_title="Manage Chatbots", page_icon="🤖")
 
 
 st.title("ShreckBots – Edit Chat Bot")
+st.markdown("---")
+st.write("Use the panel on the right to select a bot to manage!")
+st.markdown("---")
 
 needed_fields = load_needed_fields()
 bots = load_bot_configs()

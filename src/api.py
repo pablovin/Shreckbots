@@ -75,8 +75,10 @@ def create_new_pages():
     update_logger = set_loggers()
     json = request.get_json(silent=True)        
     bot = json['bot']
-    pages = json['pages']    
-    thread = threading.Thread(target=upload_pages, args=(bot, pages, update_logger))    
+    new_pages = json['new_pages']    
+    update_pages = json['update_pages']    
+
+    thread = threading.Thread(target=upload_pages, args=(bot, new_pages, update_pages, update_logger))    
     thread.start()    
 
     data = {'answer':"updated"}

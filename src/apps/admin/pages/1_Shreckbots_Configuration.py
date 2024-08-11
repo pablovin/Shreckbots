@@ -25,6 +25,10 @@ if not api_config:
  
 else:
     st.subheader("Edit API Configurations")
+    st.markdown("---")
+    st.write("Use this page to update all the important global configurations for Shreckbots.")
+    st.write("Check the meaning of each of these parameters in our Shreckbot manual: https://github.com/pablovin/Shreckbots")
+    st.markdown("---")
     api_config_updated = {}
     all_filled = True
 
