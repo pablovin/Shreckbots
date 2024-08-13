@@ -596,40 +596,19 @@ def get_entities(bot, text, logger):
     logger.warning(f" -- Deciding which pages are new and which will be updated...")
     new_entities, updatable_entities = categorize_entities(llm_response, entities)  
 
-    all_new_pages = {}
-    # logger.warning(f" -- I will create pages for these entities")
-    for entity in new_entities.keys():
-        #  logger.warning(f"  ---- {entity}: {new_entities[entity]}")
-         for page in new_entities[entity]:
-            if not entity in all_new_pages:
-                all_new_pages[entity] = []    
-
-            all_new_pages[entity].append(page)
-
-                            
-    logger.warning(f" -- I will create these new pages:")
-    for entity in all_new_pages:
-         logger.warning(f"  ---- {entity}: {all_new_pages[entity]}")
-
-    logger.warning(f" --- Creating content for the new pages...")  
-    new_pages = create_summary_from_entity(text, all_new_pages, "NewPage", model)        
-
-    logger.warning(f" --- Adding templates to new pages...")  
-    template_fields = get_template(mediawiki, all_new_pages , this_bot_entities)    
-    new_pages_with_template = add_template_to_text(new_pages,template_fields,model)    
-
-    logger.warning(f" --- Creating new pages .txt files...")
-    create_text_files(new_pages_with_template, bot, logger)    
-    
-
+    all_pages = []
     all_updatable_pages = {}
     # logger.warning(f" -- I will create pages for these entities")
     for entity in updatable_entities.keys():
         #  logger.warning(f"  ---- {entity}: {new_entities[entity]}")
          for page in updatable_entities[entity]:
             if not entity in all_updatable_pages:                
-                all_updatable_pages[entity] = []  
-            all_updatable_pages[entity].append(page)
+                all_updatable_pages[entity] = []              
+
+            if not page in all_pages:
+                all_updatable_pages[entity].append(page)
+
+            all_pages.append(page)
 
     print (all_updatable_pages)
     logger.warning(f" -- I will update these existing pages:")
@@ -645,6 +624,36 @@ def get_entities(bot, text, logger):
     logger.warning(f" --- Creating .txt files for the update pages...")  
     create_text_files(updatable_pages, bot, logger)        
     
+
+     
+    all_new_pages = {}
+    # logger.warning(f" -- I will create pages for these entities")
+    for entity in new_entities.keys():
+        #  logger.warning(f"  ---- {entity}: {new_entities[entity]}")
+         for page in new_entities[entity]:
+            if not entity in all_new_pages:
+                all_new_pages[entity] = []
+
+            if not page in all_pages:
+                all_new_pages[entity].append(page)
+                
+            all_pages.append(page)
+                                            
+    logger.warning(f" -- I will create these new pages:")
+    for entity in all_new_pages:
+         logger.warning(f"  ---- {entity}: {all_new_pages[entity]}")
+
+    logger.warning(f" --- Creating content for the new pages...")  
+    new_pages = create_summary_from_entity(text, all_new_pages, "NewPage", model)        
+
+    logger.warning(f" --- Adding templates to new pages...")  
+    template_fields = get_template(mediawiki, all_new_pages , this_bot_entities)    
+    new_pages_with_template = add_template_to_text(new_pages,template_fields,model)    
+
+    logger.warning(f" --- Creating new pages .txt files...")
+    create_text_files(new_pages_with_template, bot, logger)    
+
+
     logger.info(f" --- Update Done!")
     
 
